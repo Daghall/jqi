@@ -14,4 +14,10 @@ describe("Extract keys", () => {
       "[key4]",
     ]);
   });
+
+  it("does not try if input does not look like concatenated arrays", () => {
+
+    const testString = "node-jq: invalid json string argument supplied: \"undefined\"";
+    expect(extractKeys(testString)).to.deep.equal([]);
+  });
 });

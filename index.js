@@ -10,7 +10,8 @@ const promptText = "> ";
 // const debug = process.env.DEBUG === "1";
 
 const json = getJsonFromStdin();
-// stdin.unpipe();
+stdout.unpipe();
+stdin.unpipe();
 console.log({ stdin }); // eslint-disable-line no-console
 // process.exit();
 // terminal.cursorTo(stdin, 0, 0);

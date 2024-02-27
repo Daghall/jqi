@@ -1,26 +1,30 @@
 import jqa from "./jq-async.js";
+import extractKeys from "./extract-keys.js";
 
 const debug = process.env.DEBUG === "1";
 const keywords = [ "keys", "type", "values", "select" ];
 
 export default async function tabCompletion(string, data, rl) {
-  const word = string.split(/[|\] ]/).pop();
+  const word = string.split(/[|\], ]/).pop();
   let matches;
   if (word.startsWith(".")) {
     const nodes = word.split(/[.[]/);
     const node = nodes.slice(0, -1).join(".") || ".";
     const sub = nodes.pop() || (word.includes("[") ? "[" : ".");
-    const jqq = `${string.slice(0, string.lastIndexOf(word)) + node} | keys`;
+    const lastFilter = string.split(",").pop();
+    const jqq = `${lastFilter.slice(0, lastFilter.lastIndexOf(word)) + node} | keys?`;
     const jqKeys = await jqa(jqq, data, { output: "json" });
 
-    if (debug)console.log({ jqq, jqKeys, sub, word, nodes }); // eslint-disable-line no-console
+    if (debug)console.log({ string, jqq, jqKeys, sub, word, nodes, lastFilter }); // eslint-disable-line no-console
 
-    // The query did not match anything
-    if (!Array.isArray(jqKeys)) {
-      return [ [], word ];
+    // If multiple arrays are found, they are concatenated as a string
+    if (Array.isArray(jqKeys)) {
+      matches = jqKeys;
+    } else if (typeof jqKeys === "string") {
+      // matches = extractKeys(jqKeys).map((key) => `.${key}`);
+      matches = extractKeys(jqKeys);
     }
-
-    matches = jqKeys
+    matches = matches
       .map((i) => typeof i === "number" ? `${word}[${i}]` : i)
       .filter((i) => word.slice(-1) === "." || (typeof i === "undefined") || (i.toString().startsWith(sub)))
       .map((s) => {
@@ -29,9 +33,11 @@ export default async function tabCompletion(string, data, rl) {
         }
         return nodes.slice().concat(s).join(".");
       });
+
+    // console.log("XXX", matches.length, matches[0], word); // eslint-disable-line no-console
     if (matches.length === 1 && matches[0] === word) {
-      const jqKeys2 = await jqa(`${matches[0]} | keys`, data, { output: "json" });
-      if (debug) console.log({ jqKeys2 }); // eslint-disable-line no-console
+      const jqKeys2 = await jqa(`${string} | keys?`, data, { output: "json" });
+      if (debug) console.log({ q: `${string} | keys?`, jqKeys2 }); // eslint-disable-line no-console
       if (Array.isArray(jqKeys2)) {
         const nodeType = await jqa(`${matches[0]} | type`, data, { output: "json" });
         if (nodeType === "array") {

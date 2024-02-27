@@ -45,7 +45,7 @@ describe("Tab completion", () => {
     });
   });
 
-  describe("straigh up", () => {
+  describe("straight up", () => {
     it("root", async () => {
       await expectCompletion(".", [
         ".xfiles",
@@ -103,12 +103,22 @@ describe("Tab completion", () => {
       await expectCompletion(".xfiles.zoo.animals", [], ".xfiles.zoo.animals[");
     });
 
+    // TODO:
     it.skip("level 4, array indices", async () => {
       await expectCompletion(".xfiles.zoo.animals", [
         ".xfiles.zoo.animals[0",
         ".xfiles.zoo.animals[1",
         ".xfiles.zoo.animals[2",
       ]);
+    });
+  });
+
+  describe("multiple filters", () => {
+    it("root", async () => {
+      await expectCompletion(".xfiles, .", [
+        ".xfiles",
+        ".yfiles",
+      ], ".");
     });
   });
 
@@ -133,11 +143,25 @@ describe("Tab completion", () => {
       await expectCompletion(".[] | .", [
         ".a",
         ".b",
-        ".c",
         ".zebbra",
         ".zoo",
+        ".c",
       ], ".");
     });
+
+    it("level 2, for each, partial", async () => {
+      await expectCompletion(".[] | .z", [
+        ".zebbra",
+        ".zoo",
+      ], ".z");
+    });
+
+    it("level 2, for each, complete", async () => {
+      await expectCompletion(".[] | .zoo", [
+        ".zoo",
+      ], ".zoo.");
+    });
+
   });
 
 });

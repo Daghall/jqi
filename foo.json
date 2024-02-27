@@ -1,0 +1,19 @@
+{
+  "xfiles": {
+    "a": 1,
+    "b": 2,
+    "zoo": {
+      "animals": [
+        "elepant",
+        "leyon",
+        "munkey"
+      ]
+    },
+    "zebbra": false
+  },
+  "yfiles": {
+    "a": 3,
+    "b": 4,
+    "c": 5
+  }
+}

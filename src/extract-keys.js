@@ -5,6 +5,10 @@ export default function extractKeys(string) {
   let start = 0;
   let pos = 0;
 
+  if (!/^\[(.*\n)*\]$/.test(string)) {
+    return [];
+  }
+
   while (pos !== -1) {
     pos = string.indexOf('"', searchFrom);
 
