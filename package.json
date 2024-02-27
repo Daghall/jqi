@@ -1,0 +1,21 @@
+{
+  "name": "jqi",
+  "version": "1.0.0",
+  "description": "jq interactive",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "markus@daghall.se",
+  "license": "MIT",
+  "dependencies": {
+    "node-jq": "^2.3.3"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "eslint": "^8.20.0",
+    "eslint-config-exp": "^0.2.0",
+    "mocha": "^10.0.0"
+  }
+}
